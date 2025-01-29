@@ -22,42 +22,37 @@ export class Player extends GameObjects.Image {
       this.direction = Direction.Down;
 
       if (scene.input.keyboard) {
-        this.cursors = scene.input.keyboard.createCursorKeys();
         this.keyA = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.A);
         this.keyD = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.D);
         this.keyW = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.W);
         this.keyS = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.S);
-        scene.input.keyboard.on('keydown-A', () => {
-          this.setTexture('PlayerLeft');
-          this.direction = Direction.Left;
-        });
-        scene.input.keyboard.on('keydown-D', () => {
-          this.setTexture('PlayerRight');
-          this.direction = Direction.Right;
-        });
-        scene.input.keyboard.on('keydown-W', () => {
-          this.setTexture('PlayerUp');
-          this.direction = Direction.Up;
-        });
-        scene.input.keyboard.on('keydown-S', () => {
-          this.setTexture('PlayerDown');
-          this.direction = Direction.Down;
-        });
       }
     }
 
     update() {
-      if (this.keyD.isDown) {
-        this.x += 2; // Move the player to the right
-      }
-      if (this.keyA.isDown) {
-        this.x -= 2; // Move the player to the left
-      }
-      if (this.keyW.isDown) {
-        this.y -= 2; // Move the player up
-      }
-      if (this.keyS.isDown) {
-        this.y += 2; // Move the player down
+      if(this.body != null && 'setVelocity' in this.body){
+        this.body.setVelocity(0);
+        if (this.keyW.isDown && !this.keyS.isDown) {
+          this.body.setVelocityY(-1);
+          this.setTexture('PlayerUp');
+          this.direction = Direction.Up;
+        }
+        if (this.keyS.isDown && !this.keyW.isDown) {
+          this.body.setVelocityY(1);
+          this.setTexture('PlayerDown');
+          this.direction = Direction.Down;
+        }
+        if (this.keyD.isDown && !this.keyA.isDown) {
+          this.body.setVelocityX(1);
+          this.setTexture('PlayerRight');
+          this.direction = Direction.Right;
+        }
+        if (this.keyA.isDown && !this.keyD.isDown) {
+          this.body.setVelocityX(-1);
+          this.setTexture('PlayerLeft');
+          this.direction = Direction.Left;
+        }
+        this.body.velocity.normalize().scale(100);
       }
     }
 }

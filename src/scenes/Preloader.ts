@@ -37,6 +37,7 @@ export class Preloader extends Scene
         this.load.image('PlayerRight', 'sprites/PlayerRight.png');
         this.load.image('PlayerUp', 'sprites/PlayerUp.png');
         this.load.image('PlayerDown', 'sprites/PlayerDown.png');
+        this.load.image('world', 'sprites/WorldTimes2.png');
     }
 
     create ()
