@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { Player } from '../Player';
+import { Player } from '../objects/Player';
 import { SceneTransitionData } from '../data/globalstate';
 
 export class Level2 extends Scene

@@ -1,5 +1,5 @@
 import { Scene, GameObjects, Input } from 'phaser';
-import { Healthbar } from './ui/Healthbar';
+import { Healthbar } from '../ui/Healthbar';
 
 export enum Direction {
   Up,
