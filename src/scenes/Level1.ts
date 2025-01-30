@@ -1,14 +1,14 @@
 import { Scene } from 'phaser';
 import { Player } from '../Player';
+import { SceneTransitionData } from '../data/globalstate';
 
 export class Level1 extends Scene
 {
+  sceneTransitionData: SceneTransitionData;
   camera: Phaser.Cameras.Scene2D.Camera;
   player: Player;
   worldBoundsGraphics: Phaser.GameObjects.Graphics;
   level2TriggerArea: Phaser.GameObjects.Zone;
-  playerSpawnX: number;
-  playerSpawnY: number;
   worldWidth = 320;
   worldHeight = 320;
 
@@ -17,15 +17,17 @@ export class Level1 extends Scene
     super('Level1');
   }
 
-  init(data: { spawnX: number, spawnY: number }) {
+  init(data: SceneTransitionData) {
     // Default spawn position if no data is passed
-    this.playerSpawnX = data.spawnX || this.worldWidth / 2;
-    this.playerSpawnY = data.spawnY || this.worldHeight / 2;
-}
+    if (!data || !data.spawn) {
+      data = new SceneTransitionData(this.worldWidth / 2, this.worldHeight / 2, 100);
+    }
+    this.sceneTransitionData = data;
+  }
 
   create ()
   {
-    // this.cameras.main.setBackgroundColor('#333333');
+    this.cameras.main.setBackgroundColor('#333333');
     // Create the background world
     const level = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -44,8 +46,9 @@ export class Level1 extends Scene
       if(tiles){
         tilemap.createLayer(0, tiles, 0, 0);
       }
-    // Create player
-    this.player = new Player(this, this.playerSpawnX, this.playerSpawnY);
+    // Add player to the scene
+    this.player = new Player(this, this.sceneTransitionData.spawn.spawnX, this.sceneTransitionData.spawn.spawnY, this.sceneTransitionData.health);
+    this.physics.add.existing(this.player);
     this.physics.add.existing(this.player);
     if(this.player.body != null && 'setCollideWorldBounds' in this.player.body){
         this.player.body.setCollideWorldBounds(true);
@@ -71,6 +74,6 @@ export class Level1 extends Scene
   }
 
   enterLevel2() {
-    this.scene.start('Level2', { spawnX: 280, spawnY: this.player.y });
+    this.scene.start('Level2', new SceneTransitionData(280, this.player.y, this.player.health()));
   }
 }
