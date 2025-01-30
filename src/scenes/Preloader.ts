@@ -33,11 +33,9 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
-        this.load.image('PlayerLeft', 'sprites/PlayerLeft.png');
-        this.load.image('PlayerRight', 'sprites/PlayerRight.png');
-        this.load.image('PlayerUp', 'sprites/PlayerUp.png');
-        this.load.image('PlayerDown', 'sprites/PlayerDown.png');
+        this.load.image('playerDown', 'sprites/PlayerDown.png');
         this.load.image('world', 'sprites/WorldTimes2.png');
+        this.load.spritesheet('playerWalk', 'sprites/PlayerWalk.png', { frameWidth: 16, frameHeight: 23 });
     }
 
     create ()
