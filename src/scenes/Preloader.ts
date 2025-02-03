@@ -35,6 +35,8 @@ export class Preloader extends Scene
         this.load.image('logo', 'logo.png');
         this.load.image('playerDown', 'sprites/PlayerDown.png');
         this.load.image('world', 'sprites/WorldTimes2.png');
+        this.load.tilemapTiledJSON('level1', 'sprites/level1.json');
+        this.load.tilemapTiledJSON('level2', 'sprites/level2.json');
         this.load.spritesheet('playerWalk', 'sprites/PlayerWalk.png', { frameWidth: 16, frameHeight: 23 });
     }
 

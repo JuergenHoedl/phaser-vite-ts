@@ -8,23 +8,18 @@ export class Level extends Scene
   camera: Phaser.Cameras.Scene2D.Camera;
   player: Player;
   worldBoundsGraphics: Phaser.GameObjects.Graphics;
-  level: number[][];
-  worldWidth: number;
-  worldHeight: number;
-  private tileWidth = 32;
+  level: string;
 
-  constructor (levelName: string, level: number[][])
+  constructor (levelName: string, level: string)
   {
     super(levelName);
-    this.worldWidth = level[0].length * this.tileWidth;
-    this.worldHeight = level.length * this.tileWidth;
     this.level = level;
   }
 
   baseInit(data: SceneTransitionData) {
     // Default spawn position if no data is passed
     if (!data || !data.spawn) {
-      data = new SceneTransitionData(this.worldWidth / 2, this.worldHeight / 2, 100);
+      data = new SceneTransitionData(100, 100, 100);
     }
     this.sceneTransitionData = data;
   }
@@ -32,27 +27,35 @@ export class Level extends Scene
   baseCreate ()
   {
     this.cameras.main.setBackgroundColor('#333333');
-    // Create the background world
-    const tilemap = this.make.tilemap({ data: this.level, tileWidth: this.tileWidth, tileHeight: this.tileWidth });
-    const tiles = tilemap.addTilesetImage('world');
-    if(tiles){
-      tilemap.createLayer(0, tiles, 0, 0);
+
+    // Create the level:
+    const map = this.make.tilemap({ key: this.level });
+    const tileset = map.addTilesetImage('world', 'world');
+    if (tileset) {
+      map.createLayer('background', tileset, 0, 0);
+      map.createLayer('ground', tileset, 0, 0);
     }
+
     // Add player to the scene
     this.player = new Player(this, this.sceneTransitionData.spawn.spawnX, this.sceneTransitionData.spawn.spawnY, this.sceneTransitionData.health);
     this.physics.add.existing(this.player);
-    if(this.player.body != null && 'setCollideWorldBounds' in this.player.body){
-        this.player.body.setCollideWorldBounds(true);
-    }
     this.cameras.main.startFollow(this.player, true);
 
-    // Set and visualize world bounds
-    this.physics.world.setBounds(0, 0, this.worldWidth, this.worldHeight);
-    this.worldBoundsGraphics = this.add.graphics();
-    this.worldBoundsGraphics.lineStyle(2, 0xff0000, 1);
-    this.worldBoundsGraphics.strokeRect(0, 0, this.worldWidth, this.worldHeight);
+    // Add collision between the player and the level tiles
+    if (tileset) {
+      const backgroundLayer = map.getLayer('background')?.tilemapLayer;
+      const groundLayer = map.getLayer('ground')?.tilemapLayer;
+      if (backgroundLayer) {
+        backgroundLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.player, backgroundLayer);
+      }
+      if (groundLayer) {
+        groundLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.player, groundLayer);
+      }
+    }
   } 
-   
+
   baseUpdate() {
     this.player.update();
   }
